@@ -60,10 +60,11 @@ def layer_strategy_selector(self, layer_kwargs=None, smooth=False):
         self.strategy_names.append(strategy_name)
 
     # Strategy first layer ----------------------------------------------------
-    if len(self.crypto_pairs) == 1:
-        strategy_name += '_single'
-    else:
-        strategy_name += '_multiple'
+    if strategy_name == 'generic':
+        if len(self.crypto_pairs) == 1:
+            strategy_name += '_single'
+        else:
+            strategy_name += '_multiple'
 
     # Get function for strategy
     strategy = dic_strategy_function.get(strategy_name, None)
