@@ -22,8 +22,8 @@ import sys
 import time
 import importlib.util
 
-from exchanges_interface.model.strategy import Strategy
-from exchanges_interface.model.model_utils import set_lookback, evaluate_strategy, timeStructured
+from kiwano_portfolio.model.strategy import Strategy
+from kiwano_portfolio.model.model_utils import set_lookback, evaluate_strategy, timeStructured
 
 # Get path for files (#ToDo : make a module)
 PATH_ROOT = Path(__file__).resolve().parents[1]  # Adjust the number if needed

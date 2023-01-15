@@ -15,7 +15,7 @@
 
 
 import numpy as np
-from exchanges_interface.model.metrics import update_dataframe
+from kiwano_portfolio.model.metrics import update_dataframe
 
 '''
 This file contain all relevant functions to interface your strategy

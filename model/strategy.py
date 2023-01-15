@@ -19,10 +19,10 @@ import pandas as pd
 from pathlib import Path
 import sys
 
-from exchanges_interface.model.model_utils import (list2df, set_lookback, timeframe_to_str,
+from kiwano_portfolio.model.model_utils import (list2df, set_lookback, timeframe_to_str,
                                                    check_name)
-from exchanges_interface.model.metrics import compute_metric_selector, compute_generic_metric
-from exchanges_interface.strategy.run_strategy import run_strategy, fast_backtesting, layer_strategy_selector
+from kiwano_portfolio.model.metrics import compute_metric_selector, compute_generic_metric
+from kiwano_portfolio.strategy.run_strategy import run_strategy, fast_backtesting, layer_strategy_selector
 
 # Get path for saving files 
 PATH_ROOT = Path(__file__).resolve().parents[1]  # Adjust the number if needed

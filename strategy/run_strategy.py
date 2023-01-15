@@ -19,15 +19,15 @@ import requests
 
 from datetime import datetime
 
-from exchanges_interface.API.binance.public_access import get_realtime_price
-from exchanges_interface.model.model_utils import (smart_pause, set_lookback, prepare_data,
+from kiwano_portfolio.API.binance.public_access import get_realtime_price
+from kiwano_portfolio.model.model_utils import (smart_pause, set_lookback, prepare_data,
                                                    timeframe_to_seconds, timestamp_str, next_delta_date,
                                                    previous_delta_date, timing_context,
                                                    )
-from exchanges_interface.model.plot_functions import (prepare_live_plot, plot_live_data,
+from kiwano_portfolio.model.plot_functions import (prepare_live_plot, plot_live_data,
                                                       prepare_live_portfolio, plot_live_portfolio)
 
-from exchanges_interface.strategy.generic_strategies import (singlecrypto_strategy, multicrypto_strategy,
+from kiwano_portfolio.strategy.generic_strategies import (singlecrypto_strategy, multicrypto_strategy,
                                                              no_filter_portfolio, order66)
 
 ###############################################################################

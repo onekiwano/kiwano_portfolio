@@ -18,7 +18,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-from exchanges_interface.model.portfolio import Portfolio
+from kiwano_portfolio.model.portfolio import Portfolio
 
 crypto_pair = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT', 'FTMUSDT', 'ADAUSDT']
 
