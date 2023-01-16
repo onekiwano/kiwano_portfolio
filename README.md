@@ -42,13 +42,13 @@ Go to API Management in Settings on Binance, and click on Create API. Select Sys
 name the API, and once you pass the authentication, you have to 
 edit restriction and tick Enable Spot and Margin Trading if you want to livetrade with your algorithm.
 This is not necessary if you only want to backtest or livetest. You can then copy the API key and secret
-in a ```config.py``` file and define the variables as strings with the following names:
+in a ```config.py```  file and define the variables as strings with the following names:
 
 ```python
 api_key = 'your key as a string'
 api_secret = 'your secret as a string'
 ```
-
+For an example check the `config_template.py` in the `API/binance/` folder.
 You can finally save the file in the ```API/binance``` folder or pass the filepath
 as the `api_keys_location` argument when creating the portfolio. Then you are ready to go!
 
