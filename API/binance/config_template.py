@@ -19,7 +19,7 @@ PATH_ROOT = Path(__file__).parents[1] # Adjust the number if needed
 sys.path.append(str(PATH_ROOT))
 '''
 /!\ Do not forget to change the name of this 
-file to 'config.py', then it will be ignore and not 
+file to 'config.py', then it will be ignored by the  `.gitignore` file and not 
 uploaded in the git repo. /!\
 Go to the website and generate your own keys, then replace them
 in this file.
