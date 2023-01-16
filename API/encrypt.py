@@ -2,12 +2,10 @@ from cryptography.fernet import Fernet
 import numpy as np
 from os.path import exists, join
 
-# Lien: https://www.geeksforgeeks.org/how-to-encrypt-and-decrypt-strings-in-python/
-
-# generate a key for encryptio and decryption
+# generate a key for encryption and decryption
 # You can use fernet to generate
 # the key or use random key generator
-# here I'm using fernet to generate key
+# here I'm using fernet to generate the key.
 
 def encrypt_key(secret_key, key=None, path='', name='key_crypto_bot.npy'):
     
