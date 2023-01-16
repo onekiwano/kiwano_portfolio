@@ -38,7 +38,7 @@ each time you want to access it.
 # PATH_ROOT = Path(__file__).parents[1] # Adjust the number if needed
 # sys.path.append(str(PATH_ROOT))
 # from encrypt import decrypt_key
-# encrypted_key = api_secret = 'fdjhlsakjvakqj-vs4qaac-vkjlfjfjg' 
-# path_key = Path(__file__).parents[4] # Adjust the number if needed
+# encrypted_key = 'fdjhlsakjvakqj-vs4qaac-vkjlfjfjg' 
+# path_key = "specify/the/location/"
 # api_secret = decrypt_key(encrypted_key, path=path_key)
 
