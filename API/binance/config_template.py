@@ -14,9 +14,7 @@
 # ==============================================================================
 
 from pathlib import Path
-import sys
-PATH_ROOT = Path(__file__).parents[1] # Adjust the number if needed
-sys.path.append(str(PATH_ROOT))
+
 '''
 /!\ Do not forget to change the name of this 
 file to 'config.py', then it will be ignored by the  `.gitignore` file and not 
@@ -36,6 +34,9 @@ Save the generated key in another folder, and specify
 the path_key here, then the snippet below will decrypt the key
 each time you want to access it.
 '''
+# import sys
+# PATH_ROOT = Path(__file__).parents[1] # Adjust the number if needed
+# sys.path.append(str(PATH_ROOT))
 # from encrypt import decrypt_key
 # encrypted_key = api_secret = 'fdjhlsakjvakqj-vs4qaac-vkjlfjfjg' 
 # path_key = Path(__file__).parents[4] # Adjust the number if needed
