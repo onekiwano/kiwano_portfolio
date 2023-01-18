@@ -59,4 +59,9 @@ as the `api_keys_location` argument when creating the portfolio. Then you are re
 - ~~[CODE] Add multiple crypto input [DONE]~~
 - [CODE] multiple crypto in output
 
+## Social media
+Want to participate in the Kiwano adventure, join our 
+
+![](https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png)
+[Discord](https://discord.gg/698CKv8t)
  
