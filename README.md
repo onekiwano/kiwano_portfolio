@@ -62,6 +62,6 @@ as the `api_keys_location` argument when creating the portfolio. Then you are re
 ## Social media
 Want to participate in the Kiwano adventure, join our 
 
-![](https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png)
+![](https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png){width=50 height=50}
 [Discord](https://discord.gg/698CKv8t)
  
