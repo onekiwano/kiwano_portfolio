@@ -60,8 +60,7 @@ as the `api_keys_location` argument when creating the portfolio. Then you are re
 - [CODE] multiple crypto in output
 
 ## Social media
-Want to participate in the Kiwano adventure, join our 
+Want to participate in the Kiwano adventure, join our Discord !
 
-![](https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png){width=50 height=50}
-[Discord](https://discord.gg/698CKv8t)
+<img src=""https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png" alt="https://discord.gg/698CKv8t">
  
