@@ -64,3 +64,7 @@ Want to participate in the Kiwano adventure, join our Discord !
 
 <img src="https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png" alt="https://discord.gg/698CKv8t" style="width:48px;height:48px;">
  
+
+<a href="https://discord.gg/698CKv8t">
+  <img class="people-pic" src="{{ "https://it.moobion.com/wp-content/uploads/2020/11/discord-logo.png" | prepend:site.baseurl }}">
+</a>
