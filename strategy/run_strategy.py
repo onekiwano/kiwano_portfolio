@@ -15,20 +15,19 @@
 
 
 import numpy as np
-import requests
 
 from datetime import datetime
 
 from kiwano_portfolio.API.binance.public_access import get_realtime_price
 from kiwano_portfolio.model.model_utils import (smart_pause, set_lookback, prepare_data,
-                                                   timeframe_to_seconds, timestamp_str, next_delta_date,
-                                                   previous_delta_date, timing_context,
-                                                   )
+                                                timeframe_to_seconds, timestamp_str, next_delta_date,
+                                                previous_delta_date, timing_context,
+                                                )
 from kiwano_portfolio.model.plot_functions import (prepare_live_plot, plot_live_data,
-                                                      prepare_live_portfolio, plot_live_portfolio)
+                                    prepare_live_portfolio, plot_live_portfolio)
 
 from kiwano_portfolio.strategy.generic_strategies import (singlecrypto_strategy, multicrypto_strategy,
-                                                             no_filter_portfolio, order66)
+                                                          no_filter_portfolio, order66)
 
 ###############################################################################
 # %% functions for loading the strategy

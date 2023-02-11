@@ -20,9 +20,9 @@ from pathlib import Path
 import sys
 
 from kiwano_portfolio.model.model_utils import (list2df, set_lookback, timeframe_to_str,
-                                                   check_name)
-from kiwano_portfolio.model.metrics import compute_metric_selector, compute_generic_metric
+                                                check_name)
 from kiwano_portfolio.strategy.run_strategy import run_strategy, fast_backtesting, layer_strategy_selector
+from kiwano_portfolio.model.metrics import compute_generic_metric, compute_metric_selector
 
 # Get path for saving files 
 PATH_ROOT = Path(__file__).resolve().parents[1]  # Adjust the number if needed

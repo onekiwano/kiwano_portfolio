@@ -20,7 +20,7 @@ from pathlib import Path
 from datetime import datetime
 from datetime import timedelta
 
-from exchanges_interface.model.model_utils import set_lookback
+from kiwano_portfolio.model.model_utils import set_lookback
 
 PATH_ROOT = Path(__file__).resolve().parents[2]  # Adjust the number if needed
 sys.path.append(str(PATH_ROOT) + '/model/')

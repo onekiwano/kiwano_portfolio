@@ -17,13 +17,10 @@
 
 import argparse, sys
 import numpy as np
-from pathlib import Path
 import warnings
 warnings.filterwarnings("ignore")
 
-from kiwano_portfolio.model.portfolio import Portfolio
-
-import snoop
+from kiwano_portfolio.model import Portfolio
 
 '''
 Run this file the first time to test that the model works

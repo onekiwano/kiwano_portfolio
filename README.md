@@ -11,6 +11,8 @@ that tracks the progress over time and provides useful statistics
 on the performance of the trading algorithm. And the 
 inheriting class `strategy` that plays the trading algo.
 
+Install with ```pip install kiwano-portfolio```!
+
 ## Functionalities
 
 To understand how to use this repository, have a look at the ```main.py``` file.
