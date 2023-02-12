@@ -1,0 +1,1 @@
+from kiwano_portfolio.model.portfolio import Portfolio
