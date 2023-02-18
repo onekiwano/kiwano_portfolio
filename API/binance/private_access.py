@@ -14,7 +14,6 @@
 # ==============================================================================
 
 
-import config
 import sys
 import numpy as np
 from binance.client import Client
@@ -61,28 +60,3 @@ def get_balance(client):
             dic_balance.update({balance['asset']: float(balance['free'])})
     return dic_balance
 
-
-def test():
-    API_KEY = config.api_key
-    SECRET_KEY = config.api_secret
-
-    client = Client(API_KEY, SECRET_KEY)
-
-    dic_balance0 = get_balance(client)
-    print(dic_balance0)
-    # print('----------------')
-    symbol = 'SOLUSDT'
-    order_passed = False
-    count = 0
-    while count < 5 and not order_passed:
-        try:
-            order = make_order(symbol, 'SELL', 0.97, test=False)
-            order_passed = True
-        except:
-            count += 1
-            print(f"({count}) Order failed: {sys.exc_info()[0]} occured.")
-            print(sys.exc_info()[1])
-
-    dic_balance1 = get_balance()
-    print('----------------')
-    print(dic_balance1)
