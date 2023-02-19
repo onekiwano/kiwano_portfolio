@@ -17,7 +17,7 @@ import numpy as np
 import pylab as plb
 import matplotlib.pyplot as plt
 import matplotlib.dates as mpl_dates
-from mpl_finance import candlestick_ohlc
+from mplfinance.original_flavor import candlestick_ohlc
 import pandas as pd
 
 from datetime import datetime
