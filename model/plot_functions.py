@@ -17,7 +17,6 @@ import numpy as np
 import pylab as plb
 import matplotlib.pyplot as plt
 import matplotlib.dates as mpl_dates
-import matplotlib.ticker as ticker
 from mpl_finance import candlestick_ohlc
 import pandas as pd
 
