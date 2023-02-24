@@ -323,9 +323,8 @@ class Portfolio(Strategy):
     def reset_portfolio(self):
         self.portfolio = pd.DataFrame()
 
-    def save_portfolio(self, name='', folder='result', save_figs={}, save=True, launch_timestamp=None):
-        print('here!', launch_timestamp)
-        summary = evaluate_strategy(self, _print=True, error=True, launch_timestamp=launch_timestamp)
+    def save_portfolio(self, name='', folder='result', save_figs={}, save=True):
+        summary = evaluate_strategy(self, _print=True, error=True)
 
         if save:
             # Check if result folder exists, create it otherwise

@@ -251,21 +251,18 @@ def prepare_data(strategy, reset=True, **kwargs):
                          lookback=strategy.lookback, end_date=strategy.end_date)
     strategy.update_portfolio(strategy.lookback, last_value=last_value)  # Done into update_data
 
-def evaluate_strategy(Portfolio, _print=True, error=False, launch_timestamp=None):
-    # pd.reset_option('^display.', silent=True)
+def evaluate_strategy(Portfolio, _print=True, error=False):
 
-    df = Portfolio.portfolio
-    # print(Portfolio.portfolio.columns)
-    dfb = df[df['TimeStamp'].eq(launch_timestamp)]
-    print(dfb.to_string())
-    print(dfb['Date'])
-    # beginning = Portfolio.portfolio['timestamp'].values[0]
-    # print('--')
-    # print(Portfolio.portfolio['TimeStamp'].astype(str))
-    # Get all transactions
+    if Portfolio.initial_portfolio is None:
+        Portfolio.initial_portfolio = Portfolio.portfolio.iloc[-2]
+        init_date = Portfolio.initial_portfolio['Date']
+        Portfolio.initial_data = {}
+        Portfolio.initial_data = Portfolio.data[Portfolio.crypto_output][Portfolio.data[Portfolio.crypto_output]['Date'].eq(init_date)]
+
     buys_sells_portfolio = Portfolio.portfolio.loc[
         (Portfolio.portfolio[Portfolio.crypto_name() + '(transaction)'] != 0) |
-        (Portfolio.portfolio[Portfolio.fiat_currency + '(transaction)'] != 0)]
+        (Portfolio.portfolio[Portfolio.fiat_currency + '(transaction)'] != 0)
+    ]
     nb_transaction = len(buys_sells_portfolio)
     usd_trans = buys_sells_portfolio[Portfolio.fiat_currency + '(transaction)']
     earnings = [usd_trans.values[i] + usd_trans.values[i + 1] for i in range(len(usd_trans) - 1)]
@@ -284,6 +281,7 @@ def evaluate_strategy(Portfolio, _print=True, error=False, launch_timestamp=None
         data = data.drop('Adjusted Close', axis=1)
     except:
         pass
+
     data = data.dropna()
 
     fiat_currency = portfolio[Portfolio.fiat_currency].values
@@ -293,25 +291,28 @@ def evaluate_strategy(Portfolio, _print=True, error=False, launch_timestamp=None
     # Last time step possession
     fiat_last_asset = fiat_currency[-1]
     crypto_last_asset = crypto_output[-1]
-    total_last_fiat = fiat_last_asset + crypto_last_asset * data['average0'].values[-1]
+    conversion_last = data['average0'].values[-1]
+    total_last_fiat = fiat_last_asset + crypto_last_asset * conversion_last
 
     # First time step possession
-    fiat_first_asset = fiat_currency[0]
-    crypto_first_asset = crypto_output[0]
-    total_first_fiat = fiat_first_asset + crypto_first_asset * data['average0'].values[0]
+    fiat_first_asset = Portfolio.initial_portfolio[Portfolio.fiat_currency]
+    crypto_first_asset = Portfolio.initial_portfolio[Portfolio.crypto_name()]
+    conversion_first = Portfolio.initial_data['average0'].values[0]
+    total_first_fiat = fiat_first_asset + crypto_first_asset * conversion_first
 
     # Compute total earnings or loss
     total_earning_fiat = total_last_fiat - total_first_fiat
-    crypto_hold = fiat_first_asset / data['average0'].values[0]
-    earning_hold = crypto_hold * data['average0'].values[-1]
+    crypto_hold = fiat_first_asset / conversion_first + crypto_first_asset
+    earning_hold = crypto_hold * conversion_last
     trade_versus_hold = np.round(total_last_fiat - earning_hold, 1)
     cumret = total_last_fiat / total_first_fiat
+    cumret_hold = conversion_last / conversion_first
     
     # Update portfolio
     portfolio[f'cumret {Portfolio.crypto_output}'].loc[len(portfolio)-1] = cumret
     
     # Dates
-    date0 = data['Date'].values[0]
+    date0 = Portfolio.initial_portfolio['Date']
     date1 = data['Date'].values[-1]
 
     # Summary text
@@ -322,6 +323,7 @@ def evaluate_strategy(Portfolio, _print=True, error=False, launch_timestamp=None
     text += f'Time stopped:  {pd.Timestamp(date1)} \n'
     text += f"Total number of transaction: {nb_transaction} \n"
     text += f"Cumulative return: {cumret:.3f}; Winrate: {winrate:.3f} \n"
+    text += f"Cumulative return holding crypto: {cumret_hold:.3f} \n"
     text += '---------------------------------------------------- \n'
     text += f"Current wealth (fiat + crypto): {total_last_fiat:.3f} in fiat {Portfolio.fiat_currency} \n"
     text += f"Total earning: {total_earning_fiat:.3f} in fiat {Portfolio.fiat_currency} \n"
@@ -330,7 +332,8 @@ def evaluate_strategy(Portfolio, _print=True, error=False, launch_timestamp=None
     text += '---------------------------------------------------- \n'
     text += f"At times t=0, buying {crypto_hold:.3f} worth of {Portfolio.crypto_output}, \n"
     text += f"For a price of {crypto_hold * data['average0'].values[0]:.3f} in fiat {Portfolio.fiat_currency} \n"
-    text += f"Holding it until the last time step, it has the value: {crypto_hold * data['average0'].values[-1]:.3f} {Portfolio.fiat_currency} \n"
+    text += f"Holding in crypto until the last time step, it has the value: {earning_hold:.3f} {Portfolio.fiat_currency} \n"
+    text += f"Holding in fiat until the last time step, it has the value:   {total_first_fiat:.3f} {Portfolio.fiat_currency} \n"
     text += f"=> Trade versus hold: {trade_versus_hold:.3f} in fiat {Portfolio.fiat_currency} \n"
     if error:
         text += '---------------------------------------------------- \n'

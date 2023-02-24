@@ -241,7 +241,8 @@ def run_strategy(self, mode,
                     'order': []}
     counter = 0
     condition_run = True
-    launch_timestamp = None
+    self.initial_portfolio = None
+    self.initial_data = None
     while condition_run:
 
         ##############################################################
@@ -251,9 +252,6 @@ def run_strategy(self, mode,
         next_timestamp, _ = next_delta_date(current_timestamp, delta_t)
         condition_run = smart_pause(next_timestamp, delta_t=delta_t_pause,
                                     key=key_stop, force_sell=force_sell)
-
-        if launch_timestamp is None:
-            launch_timestamp = current_timestamp * 1000
 
         # Order 66 kills all actions
         if condition_run == 66:
@@ -314,7 +312,7 @@ def run_strategy(self, mode,
             condition_run = False
 
         # Save portfolio
-        self.save_portfolio(name=mode, save=save, launch_timestamp=launch_timestamp)
+        self.save_portfolio(name=mode, save=save)
 
     # Compute average of timings
     for label, value in self.timings.items():
