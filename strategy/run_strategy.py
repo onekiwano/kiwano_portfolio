@@ -24,7 +24,7 @@ from kiwano_portfolio.model.model_utils import (smart_pause, set_lookback, prepa
                                                 previous_delta_date, timing_context,
                                                 )
 from kiwano_portfolio.model.plot_functions import (prepare_live_plot, plot_live_data,
-                                    prepare_live_portfolio, plot_live_portfolio)
+                                                   prepare_live_portfolio, plot_live_portfolio)
 
 from kiwano_portfolio.strategy.generic_strategies import (singlecrypto_strategy, multicrypto_strategy,
                                                           no_filter_portfolio, order66)
@@ -241,6 +241,7 @@ def run_strategy(self, mode,
                     'order': []}
     counter = 0
     condition_run = True
+    launch_timestamp = None
     while condition_run:
 
         ##############################################################
@@ -250,6 +251,9 @@ def run_strategy(self, mode,
         next_timestamp, _ = next_delta_date(current_timestamp, delta_t)
         condition_run = smart_pause(next_timestamp, delta_t=delta_t_pause,
                                     key=key_stop, force_sell=force_sell)
+
+        if launch_timestamp is None:
+            launch_timestamp = current_timestamp * 1000
 
         # Order 66 kills all actions
         if condition_run == 66:
@@ -310,8 +314,7 @@ def run_strategy(self, mode,
             condition_run = False
 
         # Save portfolio
-        if save:
-            self.save_portfolio(name=mode)
+        self.save_portfolio(name=mode, save=save, launch_timestamp=launch_timestamp)
 
     # Compute average of timings
     for label, value in self.timings.items():

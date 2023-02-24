@@ -15,10 +15,10 @@
 
 import argparse, json
 import warnings
+from kiwano_portfolio import Portfolio
 
 warnings.filterwarnings("ignore")
 
-from model import Portfolio
 
 crypto_pair = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT', 'FTMUSDT', 'ADAUSDT']
 
@@ -95,7 +95,7 @@ def parse_args():
     parser.add_argument('--initial_crypto', default=0, type=int, help='Initial deposit in crypto')
     parser.add_argument('--fees', default=0.0, type=float, help='Fees applied if back or live testing')
     parser.add_argument('--plot', action='store_true', help='Plot performance')
-    parser.add_argument('--mode', default='backtesting', type=str, help='Code modality',
+    parser.add_argument('--mode', default='livetesting', type=str, help='Code modality',
                         choices=['fast_backtesting', 'backtesting', 'livetesting', 'livetrading'])
     args = parser.parse_args()
 

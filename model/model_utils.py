@@ -251,7 +251,17 @@ def prepare_data(strategy, reset=True, **kwargs):
                          lookback=strategy.lookback, end_date=strategy.end_date)
     strategy.update_portfolio(strategy.lookback, last_value=last_value)  # Done into update_data
 
-def evaluate_strategy(Portfolio, _print=True, error=False):
+def evaluate_strategy(Portfolio, _print=True, error=False, launch_timestamp=None):
+    # pd.reset_option('^display.', silent=True)
+
+    df = Portfolio.portfolio
+    # print(Portfolio.portfolio.columns)
+    dfb = df[df['TimeStamp'].eq(launch_timestamp)]
+    print(dfb.to_string())
+    print(dfb['Date'])
+    # beginning = Portfolio.portfolio['timestamp'].values[0]
+    # print('--')
+    # print(Portfolio.portfolio['TimeStamp'].astype(str))
     # Get all transactions
     buys_sells_portfolio = Portfolio.portfolio.loc[
         (Portfolio.portfolio[Portfolio.crypto_name() + '(transaction)'] != 0) |

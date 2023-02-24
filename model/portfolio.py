@@ -323,40 +323,42 @@ class Portfolio(Strategy):
     def reset_portfolio(self):
         self.portfolio = pd.DataFrame()
 
-    def save_portfolio(self, name='', folder='result', save_figs={}):
+    def save_portfolio(self, name='', folder='result', save_figs={}, save=True, launch_timestamp=None):
+        print('here!', launch_timestamp)
+        summary = evaluate_strategy(self, _print=True, error=True, launch_timestamp=launch_timestamp)
 
-        summary = evaluate_strategy(self, _print=True, error=True)
-        # Check if result folder exists, create it otherwise
-        results_dir = os.path.join(PATH_ROOT, folder)  # Concatenate path
-        if not os.path.isdir(results_dir):  # Check directory is not existing
-            os.makedirs(results_dir)  # make that directory
+        if save:
+            # Check if result folder exists, create it otherwise
+            results_dir = os.path.join(PATH_ROOT, folder)  # Concatenate path
+            if not os.path.isdir(results_dir):  # Check directory is not existing
+                os.makedirs(results_dir)  # make that directory
 
-        # Get all transactions
-        buys_sells_portfolio = self.portfolio.loc[(self.portfolio[self.crypto_name() + '(transaction)'] != 0) | (
-                self.portfolio[self.fiat_currency + '(transaction)'] != 0)]
+            # Get all transactions
+            buys_sells_portfolio = self.portfolio.loc[(self.portfolio[self.crypto_name() + '(transaction)'] != 0) | (
+                    self.portfolio[self.fiat_currency + '(transaction)'] != 0)]
 
-        # Save summary in a csv file
-        name_summary = timeStructured(self.startTime) + '_' + name + '_summary_portfolio'
-        filepath_summary = results_dir + '/' + name_summary
-        if len(buys_sells_portfolio) > 0:
-            print('SAVE :', filepath_summary)
-            index_low = np.clip(len(buys_sells_portfolio) - self.timeframe_to_save, 0, np.inf)
-            index_low = int(index_low)
-            df_to_save = buys_sells_portfolio[index_low:len(buys_sells_portfolio)]
-            df_to_save.to_csv(filepath_summary + '.csv')
+            # Save summary in a csv file
+            name_summary = timeStructured(self.startTime) + '_' + name + '_summary_portfolio'
+            filepath_summary = results_dir + '/' + name_summary
+            if len(buys_sells_portfolio) > 0:
+                print('SAVE :', filepath_summary)
+                index_low = np.clip(len(buys_sells_portfolio) - self.timeframe_to_save, 0, np.inf)
+                index_low = int(index_low)
+                df_to_save = buys_sells_portfolio[index_low:len(buys_sells_portfolio)]
+                df_to_save.to_csv(filepath_summary + '.csv')
 
-        # Save error in a csv file
-        if len(self.error_manager['order']) > 0:
-            name_error = timeStructured(self.startTime) + '_' + name + '_error_API'
-            filepath_error = results_dir + '/' + name_error
-            error_manager = self.error_manager.copy()
-            error_manager.pop('update')
-            pd.DataFrame(error_manager).to_csv(filepath_error + '.csv')
+            # Save error in a csv file
+            if len(self.error_manager['order']) > 0:
+                name_error = timeStructured(self.startTime) + '_' + name + '_error_API'
+                filepath_error = results_dir + '/' + name_error
+                error_manager = self.error_manager.copy()
+                error_manager.pop('update')
+                pd.DataFrame(error_manager).to_csv(filepath_error + '.csv')
 
-        # Save summary
-        with open(filepath_summary + '.txt', 'w') as f:
-            f.write(summary)
+            # Save summary
+            with open(filepath_summary + '.txt', 'w') as f:
+                f.write(summary)
 
-        for n, f in save_figs.items():
-            figpath = os.path.join(results_dir, name + '_' + n + '.png')
-            f.savefig(figpath)
+            for n, f in save_figs.items():
+                figpath = os.path.join(results_dir, name + '_' + n + '.png')
+                f.savefig(figpath)
