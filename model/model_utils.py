@@ -25,6 +25,7 @@ import time
 This file contains all the functions needed for the strategy and portfolio classes.
 '''
 
+
 ###############################################################################
 # %% utility, timing dictionary and pandas
 ###############################################################################
@@ -40,8 +41,9 @@ def timestamp_str(timestamp):
     date = time_str.split(' ')[0]
     timing = time_str.split(' ')[1]
     timing = timing.replace(':', '-')
-    return date+'-'+timing
-    
+    return date + '-' + timing
+
+
 def previous_delta_date(timestamp, delta_t):
     date = datetime.fromtimestamp(timestamp)
     time = datetime(year=date.year,
@@ -52,6 +54,7 @@ def previous_delta_date(timestamp, delta_t):
     delta_time = timedelta(minutes=delta_t / 60)
 
     return datetime.timestamp(time - delta_time), delta_time
+
 
 def next_delta_date(timestamp, delta_t):
     date = datetime.fromtimestamp(timestamp)
@@ -64,6 +67,7 @@ def next_delta_date(timestamp, delta_t):
 
     return datetime.timestamp(time + delta_time), delta_time
 
+
 def smart_pause(timestamp, delta_t, extra_wait=0, step=0.06, key=None, force_sell=None):
     current_timestamp = datetime.timestamp(datetime.now())  # Need to remove one minute to actually fit data timstamps
     print('--------------------------------------------------')
@@ -75,16 +79,16 @@ def smart_pause(timestamp, delta_t, extra_wait=0, step=0.06, key=None, force_sel
     # Quick fix, to account for different timings in binance and Cypto.com
     next_timestamp, _ = next_delta_date(timestamp, delta_t)
     if current_timestamp >= next_timestamp:
-        delta_t = 2*delta_t # Empirical
-    next_timestamp, _ = next_delta_date(timestamp, delta_t+extra_wait)
-    
+        delta_t = 2 * delta_t  # Empirical
+    next_timestamp, _ = next_delta_date(timestamp, delta_t + extra_wait)
+
     while True:
         # Check timestamps
         current_timestamp = datetime.timestamp(datetime.now())
         if current_timestamp >= next_timestamp:
             return True
         time.sleep(step)
-        
+
         # Check escape key
         if key is not None:
             if keyboard.is_pressed(key):
@@ -95,6 +99,7 @@ def smart_pause(timestamp, delta_t, extra_wait=0, step=0.06, key=None, force_sel
                 print(f"{key} Order 66: ending loop and selling assets")
                 return 66
 
+
 class timing_context():
     """Context manager to measure how much time was spent in the target scope."""
 
@@ -103,28 +108,30 @@ class timing_context():
         self.dt = None
         self.allow_print = allow_print
         self.set_name(name)
-        
+
     def set_name(self, name):
         self.name = name
-    
+
     def reset(self):
         # Force reset before end of the loop
         self.__exit__()
         self.t0 = time.perf_counter()
-    
+
     def __enter__(self):
         self.t0 = time.perf_counter()
 
     def __exit__(self, type=None, value=None, traceback=None):
-        self.dt = (time.perf_counter() - self.t0) # Store the desired value.
+        self.dt = (time.perf_counter() - self.t0)  # Store the desired value.
         if self.allow_print is True:
-            print(f"Scope {self.name} took {self.dt*1000: 0.1f} milliseconds.")
-    
-def timing(function , *args, **kwargs):
+            print(f"Scope {self.name} took {self.dt * 1000: 0.1f} milliseconds.")
+
+
+def timing(function, *args, **kwargs):
     start = time.time()
     output = function(*args, **kwargs)
     elapsed_time = time.time() - start
     return output, elapsed_time
+
 
 def set_lookback(lookback, timeframe, output_type='int'):
     '''
@@ -154,8 +161,8 @@ def set_lookback(lookback, timeframe, output_type='int'):
     else:
         raise Exception(f"In 'set_lookback': lookback argument can't be of type {type(lookback)}. Must be int or str.")
 
+
 def timeStructured(timing=None):
-    
     if timing is None:
         named_tuple = time.localtime()  # get struct_time
     else:
@@ -175,6 +182,7 @@ def timeframe_to_str(lookback, timeframe):
         return str(f'{int(lookback)}m')
     else:
         return lookback
+
 
 def timeframe_to_seconds(timeframe):
     if 'm' in timeframe.lower():
@@ -204,6 +212,7 @@ def list2df(crypto_list):
 
     return pd.DataFrame(dic)
 
+
 def dic2df(crypto_dic):
     newDic = {'Date': [datetime.fromtimestamp(dic['t'] / 1000) for dic in crypto_dic],
               'TimeStamp': [dic['t'] for dic in crypto_dic],
@@ -215,12 +224,11 @@ def dic2df(crypto_dic):
     return pd.DataFrame(newDic)
 
 
-
 ###############################################################################
 # %% functions for model
 ###############################################################################
 
-    
+
 def check_name(self, crypto_pair):
     if type(crypto_pair) is str:
         self.crypto_pairs = [crypto_pair]
@@ -228,7 +236,8 @@ def check_name(self, crypto_pair):
         self.crypto_pairs = crypto_pair
     else:
         raise Exception('in check_name: crypto_pair must be str or list of str')
-       
+
+
 def prepare_data(strategy, reset=True, **kwargs):
     # Prepare data and check eventual change of parameters
     crypto_pair = kwargs.get('crypto_pair', None)
@@ -247,22 +256,23 @@ def prepare_data(strategy, reset=True, **kwargs):
     if kwargs.get('end_date', None) is not None:
         strategy.end_date = kwargs.get('end_date', None)
     # print('prepare', strategy.end_date, strategy.lookback)
-    strategy.update_data(strategy.crypto_pairs, timeframe=strategy.timeframe, 
+    strategy.update_data(strategy.crypto_pairs, timeframe=strategy.timeframe,
                          lookback=strategy.lookback, end_date=strategy.end_date)
     strategy.update_portfolio(strategy.lookback, last_value=last_value)  # Done into update_data
 
-def evaluate_strategy(Portfolio, _print=True, error=False):
 
+def evaluate_strategy(Portfolio, _print=True, error=False):
     if Portfolio.initial_portfolio is None:
         Portfolio.initial_portfolio = Portfolio.portfolio.iloc[-2]
         init_date = Portfolio.initial_portfolio['Date']
         Portfolio.initial_data = {}
-        Portfolio.initial_data = Portfolio.data[Portfolio.crypto_output][Portfolio.data[Portfolio.crypto_output]['Date'].eq(init_date)]
+        Portfolio.initial_data = Portfolio.data[Portfolio.crypto_output][
+            Portfolio.data[Portfolio.crypto_output]['Date'].eq(init_date)]
 
     buys_sells_portfolio = Portfolio.portfolio.loc[
         (Portfolio.portfolio[Portfolio.crypto_name() + '(transaction)'] != 0) |
         (Portfolio.portfolio[Portfolio.fiat_currency + '(transaction)'] != 0)
-    ]
+        ]
     nb_transaction = len(buys_sells_portfolio)
     usd_trans = buys_sells_portfolio[Portfolio.fiat_currency + '(transaction)']
     earnings = [usd_trans.values[i] + usd_trans.values[i + 1] for i in range(len(usd_trans) - 1)]
@@ -307,10 +317,10 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     trade_versus_hold = np.round(total_last_fiat - earning_hold, 1)
     cumret = total_last_fiat / total_first_fiat
     cumret_hold = conversion_last / conversion_first
-    
+
     # Update portfolio
-    portfolio[f'cumret {Portfolio.crypto_output}'].loc[len(portfolio)-1] = cumret
-    
+    portfolio[f'cumret {Portfolio.crypto_output}'].loc[len(portfolio) - 1] = cumret
+
     # Dates
     date0 = Portfolio.initial_portfolio['Date']
     date1 = data['Date'].values[-1]
@@ -321,25 +331,27 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     text += '#################################################### \n'
     text += f'Starting date: {pd.Timestamp(date0)} \n'
     text += f'Time stopped:  {pd.Timestamp(date1)} \n'
+    text += f"Time elapsed: {date1 - date0} \n\n"
     text += f"Total number of transaction: {nb_transaction} \n"
-    text += f"Cumulative return: {cumret:.3f}; Winrate: {winrate:.3f} \n"
+    text += f"Winrate: {winrate:.3f} \n"
+    text += f"Cumulative return trading:        {cumret:.3f}\n"
     text += f"Cumulative return holding crypto: {cumret_hold:.3f} \n"
-    text += '---------------------------------------------------- \n'
-    text += f"Current wealth (fiat + crypto): {total_last_fiat:.3f} in fiat {Portfolio.fiat_currency} \n"
-    text += f"Total earning: {total_earning_fiat:.3f} in fiat {Portfolio.fiat_currency} \n"
-    text += '---------------------------------------------------- \n'
-    text += "             Holding versus trading \n"
-    text += '---------------------------------------------------- \n'
-    text += f"At times t=0, buying {crypto_hold:.3f} worth of {Portfolio.crypto_output}, \n"
-    text += f"For a price of {crypto_hold * data['average0'].values[0]:.3f} in fiat {Portfolio.fiat_currency} \n"
+    # text += '---------------------------------------------------- \n'
+    # text += '---------------------------------------------------- \n'
+    # text += "             Holding versus trading \n"
+    # text += '---------------------------------------------------- \n'
+    # text += f"At times t=0, buying {crypto_hold:.3f} worth of {Portfolio.crypto_output}, \n"
+    # text += f"For a price of {crypto_hold * data['average0'].values[0]:.3f} in fiat {Portfolio.fiat_currency} \n"
+    text += f"Current wealth (fiat + crypto):                               {total_last_fiat:.3f}         {Portfolio.fiat_currency} \n"
     text += f"Holding in crypto until the last time step, it has the value: {earning_hold:.3f} {Portfolio.fiat_currency} \n"
     text += f"Holding in fiat until the last time step, it has the value:   {total_first_fiat:.3f} {Portfolio.fiat_currency} \n"
-    text += f"=> Trade versus hold: {trade_versus_hold:.3f} in fiat {Portfolio.fiat_currency} \n"
+    text += f"   Trade versus hold {Portfolio.crypto_name()}: {trade_versus_hold:.3f} {Portfolio.fiat_currency} \n"
+    text += f"   Trade versus hold {Portfolio.fiat_currency}: {total_earning_fiat:.3f} {Portfolio.fiat_currency} \n"
     if error:
         text += '---------------------------------------------------- \n'
         text += f"Error API| update:{len(Portfolio.error_manager['update'])}|order:{len(Portfolio.error_manager['order'])} \n"
 
     if _print:
         print(text)
-    
+
     return text
