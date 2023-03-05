@@ -327,7 +327,7 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
 
     # Summary text
     text = '##################################################### \n'
-    text += f'#      Summary of strategy ({Portfolio.crypto_output})   \n'
+    text += f'#      Summary of strategy (on {Portfolio.crypto_output})   \n'
     text += '#################################################### \n'
     text += f'Starting date: {pd.Timestamp(date0)} \n'
     text += f'Time stopped:  {pd.Timestamp(date1)} \n'
@@ -342,11 +342,11 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     # text += '---------------------------------------------------- \n'
     # text += f"At times t=0, buying {crypto_hold:.3f} worth of {Portfolio.crypto_output}, \n"
     # text += f"For a price of {crypto_hold * data['average0'].values[0]:.3f} in fiat {Portfolio.fiat_currency} \n"
-    text += f"Current wealth (fiat + crypto):                               {total_last_fiat:.3f}         {Portfolio.fiat_currency} \n"
-    text += f"Holding in crypto until the last time step, it has the value: {earning_hold:.3f} {Portfolio.fiat_currency} \n"
-    text += f"Holding in fiat until the last time step, it has the value:   {total_first_fiat:.3f} {Portfolio.fiat_currency} \n"
-    text += f"   Trade versus hold {Portfolio.crypto_name()}: {trade_versus_hold:.3f} {Portfolio.fiat_currency} \n"
-    text += f"   Trade versus hold {Portfolio.fiat_currency}: {total_earning_fiat:.3f} {Portfolio.fiat_currency} \n"
+    text += f"Current wealth by trading (fiat + crypto):  {total_last_fiat:.3f} {Portfolio.fiat_currency} \n"
+    text += f"Holding in crypto until the last time step: {earning_hold:.3f} {Portfolio.fiat_currency} \n"
+    text += f"Holding in fiat until the last time step:   {total_first_fiat:.3f} {Portfolio.fiat_currency} \n"
+    text += f"   Trade versus holding crypto: {trade_versus_hold:.3f} {Portfolio.fiat_currency} \n"
+    text += f"   Trade versus hold fiat:      {total_earning_fiat:.3f} {Portfolio.fiat_currency} \n"
     if error:
         text += '---------------------------------------------------- \n'
         text += f"Error API| update:{len(Portfolio.error_manager['update'])}|order:{len(Portfolio.error_manager['order'])} \n"
