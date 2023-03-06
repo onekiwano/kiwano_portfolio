@@ -40,6 +40,7 @@ def get_last_quantity(Portfolio, currency, last_value):
     if last_value:
         if Portfolio.synchronize_wallet:
             dic_balance = Portfolio.synchronize_portfolio()
+            print(dic_balance)
             last_quantity = dic_balance[currency]
         else:
             last_quantity = Portfolio.portfolio[currency].values[-1]
@@ -257,8 +258,9 @@ class Portfolio(Strategy):
     def sell_action(self, i, sell_price, qty=None, prop_to_sell=None, fees=0):
         fees = fees / 100
         if prop_to_sell is not None:
-            crypto_sold = self.portfolio[self.crypto_name()].values[
-                              i - 1] * prop_to_sell  # The amount of cryto that is sold
+            print(self.portfolio.keys())
+            # The amount of cryto that is sold
+            crypto_sold = self.portfolio[self.crypto_name()].values[i - 1] * prop_to_sell
         elif qty is not None:
             crypto_sold = qty
         budget_earned = crypto_sold * sell_price * (1 - fees)  # The amount of fiat currency earned
