@@ -330,7 +330,7 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     text += f'#      Summary of strategy (on {Portfolio.crypto_output})   \n'
     text += '#################################################### \n'
     text += f'Starting date: {pd.Timestamp(date0)} \n'
-    text += f'Time stopped:  {pd.Timestamp(date1)} \n'
+    text += f'Current date:  {pd.Timestamp(date1)} \n'
     text += f"Time elapsed: {date1 - date0} \n\n"
     text += f"Total number of transaction: {nb_transaction} \n"
     text += f"Winrate: {winrate:.3f} \n"
