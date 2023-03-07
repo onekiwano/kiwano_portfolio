@@ -40,8 +40,10 @@ def get_last_quantity(Portfolio, currency, last_value):
     if last_value:
         if Portfolio.synchronize_wallet:
             dic_balance = Portfolio.synchronize_portfolio()
-            print(dic_balance)
-            last_quantity = dic_balance[currency]
+            try:
+                last_quantity = dic_balance[currency]
+            except:
+                last_quantity = 0.0
         else:
             last_quantity = Portfolio.portfolio[currency].values[-1]
     else:
