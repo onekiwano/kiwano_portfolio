@@ -215,7 +215,7 @@ class Strategy:
             lookback = set_lookback(lookbacks[i], self.timeframe)
             self.compute_metric(metric, lookback, window, data_name=data_names[i], **option_metrics)
 
-    def select_strategy(self, option_metrics=None, **strategy_kwargs):
+    def select_strategy(self, option_metrics=None, dict_strategy=None, **strategy_kwargs):
         '''
         Select the strategy to be run, these strategies can
         be layered with several strategies applied one
@@ -248,7 +248,7 @@ class Strategy:
             # Strategy to apply
             self.layered_strategy = []
             for layer, layer_kwargs in strategy_kwargs.items():
-                layer_strategy_selector(self, layer_kwargs, smooth)
+                layer_strategy_selector(self, layer_kwargs, dict_strategy=dict_strategy, smooth=smooth)
         else:
             self.option_metric = None
 

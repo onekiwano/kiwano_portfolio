@@ -41,7 +41,7 @@ from kiwano_portfolio.strategy.generic_strategies import (singlecrypto_strategy,
 # -> Which receive the whole self as input
 # When adding a new strategy here, you must provide the _type in supplementary argument 
 # -> See layer_strategy_selector() for more details...
-dic_strategy_function = {'generic_single': (singlecrypto_strategy, dict(_type='hidden')),
+dict_strategy_function = {'generic_single': (singlecrypto_strategy, dict(_type='hidden')),
                          'generic_multiple': (multicrypto_strategy, dict(_type='hidden')),
                          'no_filter': (no_filter_portfolio, dict(_type='readout')),
                          }
@@ -50,7 +50,7 @@ dic_strategy_function = {'generic_single': (singlecrypto_strategy, dict(_type='h
 # NB: If there are any other custom arguments you'd like to add, add them directly
 # in the dictionary inside the tuple of the associated strategy name.
 
-def layer_strategy_selector(self, layer_kwargs=None, smooth=False):
+def layer_strategy_selector(self, layer_kwargs=None, dict_strategy=None, smooth=False):
     if layer_kwargs is None:
         layer_kwargs = {}
     strategy_name = layer_kwargs.get('name', 'None')
@@ -66,13 +66,20 @@ def layer_strategy_selector(self, layer_kwargs=None, smooth=False):
             strategy_name += '_multiple'
 
     # Get function for strategy
-    strategy = dic_strategy_function.get(strategy_name, None)
+    if dict_strategy is None:
+        dict_strategy = dict_strategy_function
+    strategy = dict_strategy.get(strategy_name, None)
 
     if strategy is not None:
         strategy_function = strategy[0]
         supplementary_arguments = strategy[1]  # Must be a dictionary
         layer_kwargs.update(supplementary_arguments)
-
+        
+        # Update metrics to be computed for the strategy
+        metric_function = supplementary_arguments.get('_metrics', None)
+        if metric_function is not None:
+            metric_function(self.option_metrics, layer_kwargs)
+        
         if layer_kwargs['_type'] == 'hidden':
             layer_kwargs.update(dict(smooth=smooth))
             layer_kwargs.update(dict(crypto_pairs=self.crypto_pairs))
@@ -241,8 +248,6 @@ def run_strategy(self, mode,
                     'order': []}
     counter = 0
     condition_run = True
-    self.initial_portfolio = None
-    self.initial_data = None
     while condition_run:
 
         ##############################################################
@@ -352,10 +357,18 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
     print('2. Compute metrics')
     self.compute_multiple_metric(**self.option_metrics)
 
+    # Initial data
+    self.initial_portfolio = self.portfolio.iloc[-2]
+    init_date = self.initial_portfolio['Date']
+    self.initial_data = {}
+    self.initial_data = self.data[self.crypto_output][
+        self.data[self.crypto_output]['Date'].eq(init_date)]
+
+
     # Apply strategy
     print('3. Apply strategy')
     multi_layer_strategy(self, mode)
-
+    
     # Plot data            
     if plot_data:
         fig, ax, lines = plot_live_data(self.data[self.crypto_output],

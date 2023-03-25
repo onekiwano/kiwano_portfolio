@@ -92,6 +92,10 @@ class Portfolio(Strategy):
         else:
             self.crypto_currencies = []
 
+        # To evalutate strategy
+        self.initial_portfolio = None
+        self.initial_data = None
+
         # Set API
         self.api = api
         if self.api is not None:

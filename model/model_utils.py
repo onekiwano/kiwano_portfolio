@@ -318,9 +318,15 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     cumret = total_last_fiat / total_first_fiat
     cumret_hold = conversion_last / conversion_first
 
-    # Update portfolio
-    portfolio[f'cumret {Portfolio.crypto_output}'].loc[len(portfolio) - 1] = cumret
+    # Performance
+    total_spent = abs(portfolio.loc[portfolio[f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].sum())
+    gain = total_last_fiat - total_first_fiat
+    perf = (gain + total_spent) / total_spent
 
+    # Update portfolio
+    portfolio[f'cumret {Portfolio.crypto_output}'].iloc[len(portfolio) - 1] = perf
+    
+    
     # Dates
     date0 = Portfolio.initial_portfolio['Date']
     date1 = data['Date'].values[-1]
@@ -333,7 +339,9 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     text += f'Current date:  {pd.Timestamp(date1)} \n'
     text += f"Time elapsed: {date1 - date0} \n\n"
     text += f"Total number of transaction: {nb_transaction} \n"
+    text += f"Total spent in {Portfolio.fiat_currency}:         {total_spent} \n"
     text += f"Winrate: {winrate:.3f} \n"
+    text += f"Cumulative return on spent:       {perf:.3f}\n"
     text += f"Cumulative return trading:        {cumret:.3f}\n"
     text += f"Cumulative return holding crypto: {cumret_hold:.3f} \n"
     # text += '---------------------------------------------------- \n'
