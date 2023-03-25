@@ -42,9 +42,11 @@ def date_round(date):
 
 def get_candlestick(crypto_name, interval, lookback, client, end_date=None):
 
+    last_time = None    
     if end_date in [None, 'now']:
         hk = client.get_historical_klines(crypto_name, interval, lookback + ' ago UTC')
-
+        if 'd' in interval:
+            last_time = client.get_historical_klines(crypto_name, '1m', '1m' + ' ago UTC')
     else:
         d = datetime(*[int(s) for s in end_date.split('-')])
         utc_delta = date_round(datetime.utcnow()) - date_round(datetime.now())
@@ -57,11 +59,20 @@ def get_candlestick(crypto_name, interval, lookback, client, end_date=None):
             dpast = d - timedelta(minutes=int(lookback.replace('m', '')))  # 60
         else:
             raise NotImplementedError
+        
+        current_time = str(date_round(datetime.now()).date())
+        if (str(d.date()) == current_time) and ('d' in interval):
+            d = d - timedelta(days=1)
+            last_time = client.get_historical_klines(crypto_name, '1m', '1m' + ' ago UTC')
+        
         hk = client.get_historical_klines(crypto_name, interval, str(dpast), str(d))
-
+        if last_time is not None:
+            hk.append(last_time[0])
+        
         hk_len = len(hk)
         lookback_int = set_lookback(lookback, interval, 'int')
         if hk_len > lookback_int:
             nb_elem_to_remove = hk_len - lookback_int
             hk = hk[nb_elem_to_remove:]
+    
     return hk
