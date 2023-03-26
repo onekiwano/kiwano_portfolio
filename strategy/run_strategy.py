@@ -166,7 +166,7 @@ def run_strategy(self, mode,
         delta_date = timeframe_to_seconds(self.lookback)
         current_timestamp, _ = previous_delta_date(end_timestamp, delta_date)
         count_stop = set_lookback(self.lookback, self.timeframe)
-
+        
     elif 'live' in mode:
         # The delta t between each update of data
         delta_t_pause = timeframe_to_seconds(self.timeframe)  # (seconds)
@@ -254,7 +254,10 @@ def run_strategy(self, mode,
         # Wait until next iteration     
         ##############################################################
         current_timestamp = self.data[self.crypto_output]['TimeStamp'].values[-1] / 1000
-        next_timestamp, _ = next_delta_date(current_timestamp, delta_t)
+        # print( self.data[self.crypto_output]['TimeStamp'])
+        # print(delta_t)
+        next_timestamp, _ = next_delta_date(current_timestamp, delta_t_pause)
+        # print(current_timestamp, next_timestamp)
         condition_run = smart_pause(next_timestamp, delta_t=delta_t_pause,
                                     key=key_stop, force_sell=force_sell)
 
@@ -266,6 +269,7 @@ def run_strategy(self, mode,
         # Update dataframes
         ##############################################################
         print(f't:{counter + 1}. Update data')
+        next_timestamp, _ = next_delta_date(current_timestamp, delta_t)
         end_date = timestamp_str(next_timestamp)
         timer.set_name('request')
 
@@ -348,7 +352,7 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
     # Reset and initialize data
     print('1. Prepare data')
     prepare_data(self, reset=reset, **kwargs)
-
+    
     # Add columns        
     nbCol = len(self.portfolio.columns)
     self.portfolio.insert(loc=nbCol, column=f'cumret {self.crypto_output}', value=np.nan)
@@ -358,7 +362,7 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
     self.compute_multiple_metric(**self.option_metrics)
 
     # Initial data
-    self.initial_portfolio = self.portfolio.iloc[-2]
+    self.initial_portfolio = self.portfolio.iloc[0]
     init_date = self.initial_portfolio['Date']
     self.initial_data = {}
     self.initial_data = self.data[self.crypto_output][
