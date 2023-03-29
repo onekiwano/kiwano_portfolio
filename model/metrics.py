@@ -146,18 +146,22 @@ def split_data(func):
 
 
 def update_dataframe(new_data, full_data, column_name, live=False):
+
     if isinstance(new_data, dict):  # Check if multiple crypto in data
         crypto_pairs = [crypto for crypto in new_data.keys()]
         crypto = crypto_pairs[0]
         full_data = update_dataframe(new_data[crypto], full_data[crypto], column_name, live)
         return full_data
+
     elif isinstance(full_data, dict):  # Check if multiple crypto in data
         crypto_pairs = [crypto for crypto in full_data.keys()]
         full = full_data[crypto_pairs[0]].copy()
         full_data = update_dataframe(new_data, full, column_name, live)
         return full_data
+
     if isinstance(new_data, pd.core.frame.DataFrame):
         new_data = pd.DataFrame(new_data, columns=[column_name])
+
     elif isinstance(new_data, pd.core.series.Series):
         new_data = pd.DataFrame(new_data)
 
@@ -166,9 +170,10 @@ def update_dataframe(new_data, full_data, column_name, live=False):
         full_data[column_name] = np.nan
         # full_data = pd.concat([full_data, new_data], axis=1, join='outer')
 
-    # Add new values to datraframe 
+    # Add new values to datraframe
     new_data = new_data.values if isinstance(new_data, pd.core.frame.DataFrame) else new_data
     new_data = list(filter(lambda x: np.isnan(x) == False, new_data))
+
     if live:  # If live mode
         new_data = new_data[-1]  # If so, only the last element will be added
         try:
@@ -176,7 +181,6 @@ def update_dataframe(new_data, full_data, column_name, live=False):
         except:
             new_data = [new_data]
 
-    # print(len(full_data)-len(new_data), len(full_data), len(new_data), column_name)
     full_data.loc[len(full_data) - len(new_data):len(full_data), column_name] = new_data
 
     return full_data
