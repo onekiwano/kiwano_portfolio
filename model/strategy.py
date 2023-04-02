@@ -105,13 +105,14 @@ class Strategy:
                 count = 0
                 # ToDo: make a sleep of 5s, and a condition to exit on time
                 while count < 5:  # Loop for overcoming potential connexion errors
-                    try:  # Sometime you will get requests.exceptions.ReadTimeout     
+                    try:  # Sometime you will get requests.exceptions.ReadTimeout
                         data = get_candlestick(crypto_pair, self.timeframe, lookback, client=self.client,
                                                end_date=self.end_date)
                         updated = True
                         print(f"{crypto_pair} Data updated, ...")
                         break
-                    except:
+                    except Exception as e:
+                        print(e)
                         print(f"({count}) Order failed: {sys.exc_info()[0]} occured.")
                         print(sys.exc_info()[1])
                         self.error_manager['update'].append(sys.exc_info()[1])
