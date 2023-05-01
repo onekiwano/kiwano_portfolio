@@ -369,3 +369,4 @@ class Portfolio(Strategy):
             for n, f in save_figs.items():
                 figpath = os.path.join(results_dir, name + '_' + n + '.png')
                 f.savefig(figpath)
+        return summary

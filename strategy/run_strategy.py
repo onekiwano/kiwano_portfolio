@@ -133,7 +133,7 @@ def multi_layer_strategy(self, mode, counter=None, timer=None):
         else:
             timer.set_name(f'strategy-l{layer}')
 
-            strategy_layer(arg, **strategy_kwargs)
+            strategy_layer(arg, summary=self.summary, **strategy_kwargs)
 
             # Update timer
             if timer is not None:
@@ -248,16 +248,15 @@ def run_strategy(self, mode,
                     'order': []}
     counter = 0
     condition_run = True
+    self.summary = ''
     while condition_run:
 
         ##############################################################
         # Wait until next iteration     
         ##############################################################
         current_timestamp = self.data[self.crypto_output]['TimeStamp'].values[-1] / 1000
-        # print( self.data[self.crypto_output]['TimeStamp'])
-        # print(delta_t)
         next_timestamp, _ = next_delta_date(current_timestamp, delta_t_pause)
-        # print(current_timestamp, next_timestamp)
+
         condition_run = smart_pause(next_timestamp, delta_t=delta_t_pause,
                                     key=key_stop, force_sell=force_sell)
 
@@ -321,7 +320,7 @@ def run_strategy(self, mode,
             condition_run = False
 
         # Save portfolio
-        self.save_portfolio(name=mode, save=save)
+        self.summary = self.save_portfolio(name=mode, save=save)
 
     # Compute average of timings
     for label, value in self.timings.items():
