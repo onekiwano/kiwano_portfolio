@@ -120,6 +120,7 @@ class Strategy:
                 data = list2df(data)
 
             if updated:
+                print(current_data)
                 # Avoid adding duplicate TimeStamps
                 if len(self.data[crypto_pair]) > 0:
                     data = data.loc[data['TimeStamp'] > current_data['TimeStamp'].iloc[-1]]
