@@ -319,17 +319,21 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     cumret_hold = conversion_last / conversion_first
 
     # Performance
-    total_spent = abs(portfolio.loc[portfolio[f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].sum())
+    total_spent = abs(portfolio.loc[portfolio[
+                                        f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].sum())
     gain = total_last_fiat - total_first_fiat
     perf = (gain + total_spent) / total_spent
 
     # Update portfolio
     portfolio[f'cumret {Portfolio.crypto_output}'].iloc[len(portfolio) - 1] = perf
-    
-    
+
     # Dates
     date0 = Portfolio.initial_portfolio['Date']
     date1 = data['Date'].values[-1]
+    delta = date1 - date0
+    seconds_delta = delta.total_seconds()
+    days_delta = seconds_delta / (3600 * 24)
+    days_delta = 1 if days_delta < 1 else days_delta
 
     # Summary text
     text = '##################################################### \n'
@@ -337,13 +341,13 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     text += '#################################################### \n'
     text += f'Starting date: {pd.Timestamp(date0)} \n'
     text += f'Current date:  {pd.Timestamp(date1)} \n'
-    text += f"Time elapsed: {date1 - date0} \n\n"
+    text += f"Time elapsed: {delta} \n\n"
     text += f"Total number of transaction: {nb_transaction} \n"
     text += f"Total spent in {Portfolio.fiat_currency}:         {total_spent} \n"
     text += f"Winrate: {winrate:.3f} \n"
-    text += f"Cumulative return on spent:       {perf:.3f}\n"
-    text += f"Cumulative return trading:        {cumret:.3f}\n"
-    text += f"Cumulative return holding crypto: {cumret_hold:.3f} \n"
+    text += f"Cumulative return on spent:       {perf:.3f} | {perf ** (30 / days_delta):.3f}/m \n"
+    text += f"Cumulative return trading:        {cumret:.3f} | {cumret ** (30 / days_delta)}/m \n"
+    text += f"Cumulative return holding crypto: {cumret_hold:.3f} | {cumret_hold ** (30 / days_delta):.3f}/m \n"
     # text += '---------------------------------------------------- \n'
     # text += '---------------------------------------------------- \n'
     # text += "             Holding versus trading \n"
