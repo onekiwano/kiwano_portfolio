@@ -346,8 +346,10 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
     text += f"Total spent in {Portfolio.fiat_currency}:         {total_spent} \n"
     text += f"Winrate: {winrate:.3f} \n"
     text += f"Cumulative return on spent:       {perf:.3f} | {perf ** (30 / days_delta):.3f}/m \n"
-    text += f"Cumulative return trading:        {cumret:.3f} | {cumret ** (30 / days_delta)}/m \n"
-    text += f"Cumulative return holding crypto: {cumret_hold:.3f} | {cumret_hold ** (30 / days_delta):.3f}/m \n"
+    text += f"Cumulative return trading:        {cumret:.3f} | {cumret ** (30 / days_delta):.3f}/m" \
+            f" | {cumret ** (30 / days_delta) ** (12):.3f}/y \n"
+    text += f"Cumulative return holding crypto: {cumret_hold:.3f} | {cumret_hold ** (30 / days_delta):.3f}/m" \
+            f" | {cumret_hold ** (30 / days_delta) ** (12):.3f}/y \n"
     # text += '---------------------------------------------------- \n'
     # text += '---------------------------------------------------- \n'
     # text += "             Holding versus trading \n"
