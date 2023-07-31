@@ -118,7 +118,15 @@ class Strategy:
                         self.error_manager['update'].append(sys.exc_info()[1])
                         count += 1
                 data = list2df(data)
-
+            elif self.api == 'yfinance':
+                lookback = timeframe_to_str(self.lookback, self.timeframe)
+                try:
+                    data = get_candlestick(crypto_pair, self.timeframe, lookback,
+                                           end_date=self.end_date)
+                    updated = True
+                except:
+                    updated = False
+            
             if updated:
                 # Avoid adding duplicate TimeStamps
                 if len(self.data[crypto_pair]) > 0:

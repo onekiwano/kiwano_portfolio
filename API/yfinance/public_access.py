@@ -18,6 +18,7 @@ def date_round(date):
 def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookback=None):
     
     # Set lookback
+    print(timeframe, lookback, end_date)
     lookback_int = set_lookback(lookback, timeframe, 'int')
     if original_lookback is None:
         original_lookback = lookback_int

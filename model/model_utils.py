@@ -133,7 +133,7 @@ def timing(function, *args, **kwargs):
     return output, elapsed_time
 
 
-def set_lookback(lookback, timeframe, output_type='int'):
+def set_lookback(lookback, timeframe, output_type='int', unit_lookback=None):
     '''
     Parameters
     ----------
@@ -153,6 +153,8 @@ def set_lookback(lookback, timeframe, output_type='int'):
     if isinstance(lookback, int) or isinstance(lookback, np.float64):
         if output_type == 'int':
             return int(lookback)
+        elif output_type == 'str':
+            return str(lookback) + unit_lookback
     if isinstance(lookback, str):
         if output_type == 'int':
             timeframe_second = timeframe_to_seconds(timeframe)
@@ -261,7 +263,7 @@ def prepare_data(strategy, reset=True, **kwargs):
     strategy.update_portfolio(strategy.lookback, last_value=last_value)  # Done into update_data
 
 
-def evaluate_strategy(Portfolio, _print=True, error=False):
+def evaluate_strategy(Portfolio, _print=True, error=False, live=True):
     if Portfolio.initial_portfolio is None:
         Portfolio.initial_portfolio = Portfolio.portfolio.iloc[-2]
         init_date = Portfolio.initial_portfolio['Date']
@@ -296,19 +298,33 @@ def evaluate_strategy(Portfolio, _print=True, error=False):
 
     fiat_currency = portfolio[Portfolio.fiat_currency].values
     crypto_output = portfolio[Portfolio.crypto_name()].values
-
+    
+    if live:
+        index = [-1]
+    else:
+        index = np.arange(len(portfolio))
+    
     ## Total earning
     # Last time step possession
     fiat_last_asset = fiat_currency[-1]
     crypto_last_asset = crypto_output[-1]
-    conversion_last = data['average0'].values[-1]
+    conversion_last = data['Close'].values[-1]
     total_last_fiat = fiat_last_asset + crypto_last_asset * conversion_last
 
     # First time step possession
     fiat_first_asset = Portfolio.initial_portfolio[Portfolio.fiat_currency]
     crypto_first_asset = Portfolio.initial_portfolio[Portfolio.crypto_name()]
-    conversion_first = Portfolio.initial_data['average0'].values[0]
+    conversion_first = Portfolio.initial_data['Close'].values[0]
     total_first_fiat = fiat_first_asset + crypto_first_asset * conversion_first
+
+    # Performance 
+    portfolio['Wealth'].iloc[index] = fiat_currency[index] + crypto_output[index] * data['Close'].iloc[index]
+    portfolio['Spent'].iloc[index] = portfolio.loc[portfolio.loc[index,
+                                        f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].cumsum()
+    portfolio['Spent'].iloc[index] = portfolio['Spent'].iloc[index].abs()
+    portfolio['Gain'].iloc[index] = portfolio['Wealth'] - total_first_fiat
+    portfolio['ROI'].iloc[index] = portfolio['Gain'].values[index] /portfolio['Spent'].values[index]
+
 
     # Compute total earnings or loss
     total_earning_fiat = total_last_fiat - total_first_fiat

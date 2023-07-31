@@ -101,16 +101,17 @@ class Portfolio(Strategy):
         if self.api is not None:
             self.api_location = str(PATH_ROOT) + f'/API/{self.api}'
             # If no location is provided, the default location is used
-            if api_keys_location == '':
-                api_keys_location = os.path.join(self.api_location, 'config.py')
 
             if self.api == 'binance':
+                if api_keys_location == '':
+                    api_keys_location = os.path.join(self.api_location, 'config.py')
                 sys.path.append(self.api_location)
                 from binance.client import Client
                 path, file = os.path.split(api_keys_location)
                 keys_file = module_from_file(file, api_keys_location)
-
                 self.client = Client(keys_file.api_key, keys_file.api_secret)
+            elif self.api == 'yfinance':
+                pass
             else:
                 raise NotImplementedError
 
@@ -166,12 +167,21 @@ class Portfolio(Strategy):
         last_fiat = get_last_quantity(self, self.fiat_currency, last_value)
         new_portfolio[self.fiat_currency] = last_fiat * np.ones(lookback)  # fiat budget
         new_portfolio[self.fiat_currency + '(transaction)'] = np.zeros(lookback)  # crypto bought history
-
+        
+        
         # Update cryptos
         for i, crypto_output in enumerate(self.crypto_currencies):
             last_crypto = get_last_quantity(self, crypto_output, last_value)
             new_portfolio[crypto_output] = last_crypto * np.ones(lookback)  # crypto budget
             new_portfolio[crypto_output + '(transaction)'] = np.zeros(lookback)  # crypto bought history
+            new_portfolio[f'cumret {self.crypto_output}'] = np.nan
+
+        # Column for performances
+        new_portfolio[f'cumret {self.crypto_output}'] = np.nan
+        new_portfolio['Wealth'] = np.nan
+        new_portfolio['Spent'] = np.nan
+        new_portfolio['Gain'] = np.nan
+        new_portfolio['ROI'] = np.nan
 
         # Avoid adding duplicate TimeStamps
         if len(self.portfolio) > 0:
@@ -331,8 +341,8 @@ class Portfolio(Strategy):
     def reset_portfolio(self):
         self.portfolio = pd.DataFrame()
 
-    def save_portfolio(self, name='', folder='result', save_figs={}, save=True):
-        summary = evaluate_strategy(self, _print=True, error=True)
+    def save_portfolio(self, name='', folder='result', save_figs={}, save=True, live=True):
+        summary = evaluate_strategy(self, _print=True, error=True, live=live)
 
         if save:
             # Check if result folder exists, create it otherwise

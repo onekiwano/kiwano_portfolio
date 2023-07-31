@@ -222,8 +222,6 @@ def run_strategy(self, mode,
 
     # Add columns
     self.data[self.crypto_output].insert(loc=6, column='Adjusted Close', value=np.nan)  # For real price value
-    nbCol = len(self.portfolio.columns)
-    self.portfolio.insert(loc=nbCol, column=f'cumret {self.crypto_output}', value=np.nan)
 
     # Compute metrics
     print('2. Compute metrics')
@@ -352,10 +350,6 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
     print('1. Prepare data')
     prepare_data(self, reset=reset, **kwargs)
     
-    # Add columns        
-    nbCol = len(self.portfolio.columns)
-    self.portfolio.insert(loc=nbCol, column=f'cumret {self.crypto_output}', value=np.nan)
-
     # Compute metrics
     print('2. Compute metrics')
     self.compute_multiple_metric(**self.option_metrics)
@@ -393,4 +387,4 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
             save_figs.update(data=fig)
         if not fig1 is None:
             save_figs.update(portfolio=fig1)
-        self.save_portfolio(name=mode + strat_name + '_', save_figs=save_figs)
+        self.save_portfolio(name=mode + strat_name + '_', save_figs=save_figs, live=False)
