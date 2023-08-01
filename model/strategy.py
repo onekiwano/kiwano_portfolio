@@ -97,7 +97,7 @@ class Strategy:
                 # data = list(data)[size - lookback:size]
                 # data = dic2df(data)
                 raise NotImplementedError
-            elif self.api == 'bybit':
+            elif self.api == 'bitget':
                 raise NotImplementedError
             elif self.api == 'binance':
                 lookback = timeframe_to_str(self.lookback, self.timeframe)
@@ -113,7 +113,7 @@ class Strategy:
                         break
                     except Exception as e:
                         print(e)
-                        print(f"({count}) Order failed: {sys.exc_info()[0]} occured.")
+                        print(f"({count}) Get data failed: {sys.exc_info()[0]} occured.")
                         print(sys.exc_info()[1])
                         self.error_manager['update'].append(sys.exc_info()[1])
                         count += 1
@@ -124,9 +124,12 @@ class Strategy:
                     data = get_candlestick(crypto_pair, self.timeframe, lookback,
                                            end_date=self.end_date)
                     updated = True
-                except:
+                except Exception as e:
+                    print(e)
+                    print(f"Get data failed: {sys.exc_info()[0]} occured.")
+                    print(sys.exc_info()[1])
+                    self.error_manager['update'].append(sys.exc_info()[1])
                     updated = False
-            
             if updated:
                 # Avoid adding duplicate TimeStamps
                 if len(self.data[crypto_pair]) > 0:

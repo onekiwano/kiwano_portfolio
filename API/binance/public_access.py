@@ -51,12 +51,13 @@ def get_candlestick(crypto_name, interval, lookback, client, end_date=None):
         d = datetime(*[int(s) for s in end_date.split('-')])
         utc_delta = date_round(datetime.utcnow()) - date_round(datetime.now())
         d = d + utc_delta
-        if 'days' in lookback:
-            dpast = d - timedelta(days=int(lookback.replace('days', '')))
+        lookback_int = set_lookback(lookback, interval, 'int')
+        if 'd' in lookback:
+            dpast = d - timedelta(days=lookback_int)
         elif 'h' in lookback:
-            dpast = d - timedelta(hours=int(lookback.replace('h', '')))  # 60
+            dpast = d - timedelta(hours=lookback_int)  # 60
         elif 'm' in lookback:
-            dpast = d - timedelta(minutes=int(lookback.replace('m', '')))  # 60
+            dpast = d - timedelta(minutes=lookback_int)  # 60
         else:
             raise NotImplementedError
         

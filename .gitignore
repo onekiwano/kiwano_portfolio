@@ -162,3 +162,4 @@ result/2022-04-18_backtesting_summary_portfolio.txt
 result/2022-04-18_livetesting_summary_portfolio.txt
 result/2022-04-18_livetesting_summary_portfolio.txt
 *.png
+API/yfinance/crypto_symbols.npy

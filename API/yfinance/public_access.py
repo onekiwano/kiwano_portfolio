@@ -8,6 +8,26 @@ Created on Thu Jul 20 14:04:57 2023
 import yfinance
 from datetime import datetime, timedelta
 from kiwano_portfolio.model.model_utils import set_lookback
+import numpy as np 
+
+import requests
+from requests_html import HTMLSession
+import pandas as pd
+
+def save_crypto_symbols():
+    # Run this function once
+    session = HTMLSession()
+    num_currencies=250
+    resp = session.get(f"https://finance.yahoo.com/crypto?offset=0&count={num_currencies}")
+    tables = pd.read_html(resp.html.raw_html)               
+    df = tables[0].copy()
+    symbols_yf = df.Symbol.tolist()
+    symbols_yf = [symbol.split('-USD')[0] for symbol in symbols_yf]
+    
+    np.save('crypto_symbols.npy', symbols_yf)
+    
+    return symbols_yf
+
 
 def date_round(date):
     return datetime(year=date.year,
@@ -18,18 +38,22 @@ def date_round(date):
 def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookback=None):
     
     # Set lookback
-    print(timeframe, lookback, end_date)
     lookback_int = set_lookback(lookback, timeframe, 'int')
     if original_lookback is None:
         original_lookback = lookback_int
     
+    # Get crypto symbol
+    try:
+        crypto_symbols = np.load('crypto_symbols.npy')
+    except:
+        crypto_symbols = save_crypto_symbols()
     
-    if 'S&P500' in symbol:
-        symbol = "^GSPC"
-    elif 'BTC' in symbol:
-        symbol = 'BTC-USD'
-        # lookback_int += 1
-
+    if symbol.split('USD')[0] in crypto_symbols:
+        symbol = symbol.split('USD')[0] + '-USD'
+        lookback_int += 1
+    else:
+        if 'S&P500' in symbol:
+            symbol = "^GSPC"
         
     if end_date in [None, 'now', 'Now', 'None']:
         
@@ -95,6 +119,7 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
         df = df.reset_index()
         
     return df
+
 
 # timeframe = '1d'
 # lookback = '20days'
