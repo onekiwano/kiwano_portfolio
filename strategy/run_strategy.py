@@ -387,4 +387,6 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
             save_figs.update(data=fig)
         if not fig1 is None:
             save_figs.update(portfolio=fig1)
-        self.save_portfolio(name=mode + strat_name + '_', save_figs=save_figs, live=False)
+            self.save_portfolio(name=mode + strat_name + '_', save_figs=save_figs, live=False)
+    else:
+        self.save_portfolio(save=False, live=False)
