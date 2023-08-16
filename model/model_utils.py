@@ -318,7 +318,7 @@ def evaluate_strategy(Portfolio, _print=True, error=False, live=True):
     total_first_fiat = fiat_first_asset + crypto_first_asset * conversion_first
 
     # Performance 
-    if 'dca' in self.strategy_name:
+    if 'dca' in Portfolio.strategy_name:
         portfolio['Wealth'].iloc[index] = fiat_currency[index] + crypto_output[index] * data['Close'].iloc[index]
         portfolio['Spent'].iloc[index] = portfolio.loc[portfolio.loc[index,
                                             f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].cumsum()
