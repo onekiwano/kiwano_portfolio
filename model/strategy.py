@@ -42,7 +42,8 @@ class Strategy:
 
         self.data = {crypto_pair: pd.DataFrame() for crypto_pair in self.crypto_pairs}
         self.size = 0
-
+        self.strategy_name = []
+        
         # Parameter for the trade
         self.strategy_names = []
         self.timeframe = timeframe

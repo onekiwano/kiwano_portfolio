@@ -318,12 +318,13 @@ def evaluate_strategy(Portfolio, _print=True, error=False, live=True):
     total_first_fiat = fiat_first_asset + crypto_first_asset * conversion_first
 
     # Performance 
-    portfolio['Wealth'].iloc[index] = fiat_currency[index] + crypto_output[index] * data['Close'].iloc[index]
-    portfolio['Spent'].iloc[index] = portfolio.loc[portfolio.loc[index,
-                                        f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].cumsum()
-    portfolio['Spent'].iloc[index] = portfolio['Spent'].iloc[index].abs()
-    portfolio['Gain'].iloc[index] = portfolio['Wealth'] - total_first_fiat
-    portfolio['ROI'].iloc[index] = portfolio['Gain'].values[index] /portfolio['Spent'].values[index]
+    if 'dca' in self.strategy_name:
+        portfolio['Wealth'].iloc[index] = fiat_currency[index] + crypto_output[index] * data['Close'].iloc[index]
+        portfolio['Spent'].iloc[index] = portfolio.loc[portfolio.loc[index,
+                                            f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].cumsum()
+        portfolio['Spent'].iloc[index] = portfolio['Spent'].iloc[index].abs()
+        portfolio['Gain'].iloc[index] = portfolio['Wealth'] - total_first_fiat
+        portfolio['ROI'].iloc[index] = portfolio['Gain'].values[index] /portfolio['Spent'].values[index]
 
 
     # Compute total earnings or loss

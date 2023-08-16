@@ -64,7 +64,7 @@ def layer_strategy_selector(self, layer_kwargs=None, dict_strategy=None, smooth=
             strategy_name += '_single'
         else:
             strategy_name += '_multiple'
-
+    self.strategy_name.append(strategy_name)
     # Get function for strategy
     if dict_strategy is None:
         dict_strategy = dict_strategy_function
