@@ -128,7 +128,14 @@ def multi_layer_strategy(self, mode, counter=None, timer=None):
         # Run strategy
         # If called from fast_backtesting()
         if 'fast' in mode:
-            strategy_layer(arg, self.size, **strategy_kwargs)
+            print('strategy_kwargs', strategy_kwargs)
+            print('arg', arg)
+            if strategy_kwargs.get('lookback', None) is not None:
+                lookback = strategy_kwargs['lookback']
+                strategy_kwargs.pop('lookback')
+            else:
+                lookback = self.size
+            strategy_layer(arg, lookback, **strategy_kwargs)
         # If called from run_strategy()
         else:
             timer.set_name(f'strategy-l{layer}')
@@ -381,12 +388,11 @@ def fast_backtesting(self, plot_data=False, plot_portfolio=False, reset=True,
         strat_name = ''
         for name in self.strategy_names:
             strat_name += '_' + name
-
         save_figs = {}
         if not fig is None:
             save_figs.update(data=fig)
         if not fig1 is None:
             save_figs.update(portfolio=fig1)
-            self.save_portfolio(name=mode + strat_name + '_', save_figs=save_figs, live=False)
+        self.save_portfolio(name=mode + strat_name + '_', save_figs=save_figs, live=False)
     else:
         self.save_portfolio(save=False, live=False)

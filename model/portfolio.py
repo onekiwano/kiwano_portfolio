@@ -342,6 +342,7 @@ class Portfolio(Strategy):
         self.portfolio = pd.DataFrame()
 
     def save_portfolio(self, name='', folder='result', save_figs={}, save=True, live=True):
+        
         summary = evaluate_strategy(self, _print=True, error=True, live=live)
 
         if save:

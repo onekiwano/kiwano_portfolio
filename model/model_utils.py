@@ -302,8 +302,12 @@ def evaluate_strategy(Portfolio, _print=True, error=False, live=True):
     if live:
         index = [-1]
     else:
-        index = np.arange(len(portfolio))
-    
+        index_data = np.arange(len(data))
+        if len(data) != len(portfolio):
+            index = np.arange(len(portfolio)-len(data), len(portfolio))
+        else:
+            index = index_data
+            
     ## Total earning
     # Last time step possession
     fiat_last_asset = fiat_currency[-1]
@@ -318,12 +322,14 @@ def evaluate_strategy(Portfolio, _print=True, error=False, live=True):
     total_first_fiat = fiat_first_asset + crypto_first_asset * conversion_first
 
     # Performance 
+    print(Portfolio.strategy_name[0])
     if 'dca' in Portfolio.strategy_name[0]:
-        portfolio['Wealth'].iloc[index] = fiat_currency[index] + crypto_output[index] * data['Close'].iloc[index]
-        portfolio['Spent'].iloc[index] = portfolio.loc[portfolio.loc[index,
-                                            f'{Portfolio.fiat_currency}(transaction)'] < 0, f'{Portfolio.fiat_currency}(transaction)'].cumsum()
+        portfolio['Wealth'].iloc[index] = fiat_currency[index] + crypto_output[index] * data['Close'].iloc[index_data]
+        portfolio_indexed = portfolio.loc[index,:].copy()
+        mask = portfolio_indexed.loc[index, f'{Portfolio.fiat_currency}(transaction)'] < 0
+        portfolio['Spent'].iloc[index] = portfolio_indexed.loc[mask, f'{Portfolio.fiat_currency}(transaction)'].cumsum()
         portfolio['Spent'].iloc[index] = portfolio['Spent'].iloc[index].abs()
-        portfolio['Gain'].iloc[index] = portfolio['Wealth'] - total_first_fiat
+        portfolio['Gain'].iloc[index] = portfolio['Wealth'].values[index] - total_first_fiat
         portfolio['ROI'].iloc[index] = portfolio['Gain'].values[index] /portfolio['Spent'].values[index]
 
 
