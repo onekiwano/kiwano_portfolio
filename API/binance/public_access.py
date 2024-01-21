@@ -20,7 +20,7 @@ from pathlib import Path
 from datetime import datetime
 from datetime import timedelta
 
-from kiwano_portfolio.model.model_utils import set_lookback
+from kiwano_portfolio.model.model_utils import set_lookback, list2df
 
 PATH_ROOT = Path(__file__).resolve().parents[2]  # Adjust the number if needed
 sys.path.append(str(PATH_ROOT) + '/model/')
@@ -40,7 +40,7 @@ def date_round(date):
                     hour=date.hour)
 
 
-def get_candlestick(crypto_name, interval, lookback, client, end_date=None):
+def get_candlestick(crypto_name, interval, lookback, client, end_date=None, as_df=True):
 
     last_time = None
     if end_date in [None, 'now']:
@@ -75,4 +75,7 @@ def get_candlestick(crypto_name, interval, lookback, client, end_date=None):
         if hk_len > lookback_int:
             nb_elem_to_remove = hk_len - lookback_int
             hk = hk[nb_elem_to_remove:]
+
+    if as_df:
+        hk = list2df(hk)
     return hk
