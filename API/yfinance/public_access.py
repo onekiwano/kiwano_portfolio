@@ -60,13 +60,13 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
 
         # Format lookback
         if 'd' in lookback:
-            lookback = lookback.split('day')[0]
+            lookback_int = lookback.split('day')[0]
             unit_lookback = 'd'
-        elif 'h' in lookback:
-            lookback = lookback.split('hour')[0]
+        elif lookback.endswith('h'):
+            lookback_int = lookback.split('h')[0]
             unit_lookback = 'h'
         elif lookback.endswith('min'):
-            lookback = lookback.split('min')[0]
+            lookback_int = lookback.split('min')[0]
             unit_lookback = 'min'
         elif lookback.endswith('mo'):
             lookback_int = int(lookback.split('mo')[0])
@@ -74,8 +74,6 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
         else:
             raise NotImplementedError
         lookback = str(lookback_int) + unit_lookback
-
-        print('inside', lookback_int, lookback, unit_lookback)
 
         df = yfinance.download(tickers=symbol, interval=timeframe, period=lookback)
     else:
