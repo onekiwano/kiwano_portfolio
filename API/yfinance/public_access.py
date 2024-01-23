@@ -71,6 +71,9 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
         elif lookback.endswith('mo'):
             lookback_int = int(lookback.split('mo')[0])
             unit_lookback = 'mo'
+        elif lookback.endswith('y'):
+            lookback_int = int(lookback.split('y')[0])
+            unit_lookback = 'y'
         else:
             raise NotImplementedError
         lookback = str(lookback_int) + unit_lookback
