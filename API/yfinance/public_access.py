@@ -38,9 +38,11 @@ def date_round(date):
 
 def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookback=None):
     # Set lookback
-    lookback_int = set_lookback(lookback, timeframe, 'int')
-    if original_lookback is None:
-        original_lookback = lookback_int
+    # lookback_int = set_lookback(lookback, timeframe, 'int')
+    # if original_lookback is None:
+    #     original_lookback = lookback_int
+    # else:
+
 
     # Get crypto symbol
     try:
@@ -51,7 +53,7 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
     if symbol.split('USD')[0] in crypto_symbols:
         if not '-' in symbol:
             symbol = symbol.split('USD')[0] + '-USD'
-        lookback_int += 1
+        # lookback_int += 1
     else:
         if 'S&P500' == symbol:
             symbol = "^GSPC"
