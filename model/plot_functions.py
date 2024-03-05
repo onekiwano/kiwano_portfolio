@@ -14,7 +14,11 @@
 # ==============================================================================
 
 import numpy as np
-import pylab as plb
+try:
+    import pylab as plb
+except ImportError:
+    pass
+
 import matplotlib.pyplot as plt
 import matplotlib.dates as mpl_dates
 from mplfinance.original_flavor import candlestick_ohlc
