@@ -35,6 +35,25 @@ def date_round(date):
                     month=date.month,
                     day=date.day)
 
+def lookback_to_days(lookback):
+    if 'd' in lookback:
+        lookback_int = lookback.split('day')[0]
+    elif lookback.endswith('h'):
+        lookback_int = lookback.split('h')[0]
+        # hours to days
+        lookback_int = int(lookback_int) // 24
+    elif lookback.endswith('min'):
+        lookback_int = lookback.split('min')[0]
+        # minutes to days
+        lookback_int = int(lookback_int) // (24 * 60)
+    elif lookback.endswith('mo'):
+        lookback_int = int(lookback.split('mo')[0]) * 30
+    elif lookback.endswith('y'):
+        lookback_int = int(lookback.split('y')[0]) * 365
+    else:
+        raise NotImplementedError
+    return int(lookback_int)
+
 
 def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookback=None):
     # Set lookback
@@ -42,7 +61,6 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
     # if original_lookback is None:
     #     original_lookback = lookback_int
     # else:
-
 
     # Get crypto symbol
     try:
@@ -58,53 +76,38 @@ def get_candlestick(symbol, timeframe, lookback, end_date=None, original_lookbac
         if 'S&P500' == symbol:
             symbol = "^GSPC"
 
+
+    # Format lookback
+    if 'd' in lookback:
+        lookback_int = lookback.split('day')[0]
+        unit_lookback = 'd'
+    elif lookback.endswith('h'):
+        lookback_int = lookback.split('h')[0]
+        unit_lookback = 'h'
+    elif lookback.endswith('min'):
+        lookback_int = lookback.split('min')[0]
+        unit_lookback = 'min'
+    elif lookback.endswith('mo'):
+        lookback_int = int(lookback.split('mo')[0])
+        unit_lookback = 'mo'
+    elif lookback.endswith('y'):
+        lookback_int = int(lookback.split('y')[0])
+        unit_lookback = 'y'
+    else:
+        raise NotImplementedError
+    lookback = str(lookback_int) + unit_lookback
+
     if end_date in [None, 'now', 'Now', 'None']:
-
-        # Format lookback
-        if 'd' in lookback:
-            lookback_int = lookback.split('day')[0]
-            unit_lookback = 'd'
-        elif lookback.endswith('h'):
-            lookback_int = lookback.split('h')[0]
-            unit_lookback = 'h'
-        elif lookback.endswith('min'):
-            lookback_int = lookback.split('min')[0]
-            unit_lookback = 'min'
-        elif lookback.endswith('mo'):
-            lookback_int = int(lookback.split('mo')[0])
-            unit_lookback = 'mo'
-        elif lookback.endswith('y'):
-            lookback_int = int(lookback.split('y')[0])
-            unit_lookback = 'y'
-        else:
-            raise NotImplementedError
-        lookback = str(lookback_int) + unit_lookback
-
         df = yfinance.download(tickers=symbol, interval=timeframe, period=lookback)
     else:
-        end = datetime(*[int(s) for s in end_date.split('-')])
-        utc_delta = date_round(datetime.utcnow()) - date_round(datetime.now())
-        end = end + utc_delta
-        if 'd' in lookback:
-            unit_lookback = 'd'
-            start = end - timedelta(days=lookback_int)
-        elif 'h' in lookback:
-            unit_lookback = 'h'
-            start = end - timedelta(hours=lookback_int)
-        elif 'm' in lookback:
-            unit_lookback = 'm'
-            start = end - timedelta(minutes=lookback_int)
-        else:
-            raise NotImplementedError
+        days = lookback_to_days(lookback)
+        start_date = date_round(end_date - timedelta(days=days))
 
-        _format = '%Y-%m-%d'
-        end = date_round(end)
-        end = end.strftime(_format)
-        start = date_round(start)
-        start = start.strftime(_format)
+        # datetime to YYYY-MM-DD
+        end_date = end_date.strftime('%Y-%m-%d')
+        start_date = start_date.strftime('%Y-%m-%d')
+        df = yfinance.download(tickers=symbol, start=start_date, end=end_date, interval=timeframe)
 
-        df = yfinance.download(tickers=symbol, start=start,
-                               end=end, interval=timeframe)
         if len(df) == 0:
             raise Exception('Symbol not found.')
 
