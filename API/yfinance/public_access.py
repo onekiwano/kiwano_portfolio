@@ -36,7 +36,9 @@ def date_round(date):
                     day=date.day)
 
 def lookback_to_days(lookback):
-    if 'd' in lookback:
+    if lookback.endswith('d'):
+        lookback_int = lookback.split('d')[0]
+    elif 'day' in lookback:
         lookback_int = lookback.split('day')[0]
     elif lookback.endswith('h'):
         lookback_int = lookback.split('h')[0]
